@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\090821e948b720962080f9e8ca002ea9786a95ce\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bc0d71e8828a145ca4aebde8f6897608070f8863">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_6dacddfa2562326fbc174c548a0e81a3483aecb0\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\cb6f93b4dc7c4e47e34539cf6fe0ec3303f3ac5a\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="643a2fd3bd06c44be5d20efc0ba4ca02036d2c8a">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_241b794de91e005747d7c48b2fb846b21669c725\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.6.0\98476622f10715998eacf9240d6b479f12c66143\okio-1.6.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="98476622f10715998eacf9240d6b479f12c66143">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\okio-1.6.0_4c66a76f59d9dd97a4e2d0ba27608603cacf0c40\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\e573ee9c0d77fbee7c20683cd16a4f2f158a5070\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="fa0446a14ed5dd3725047d6399ffea771a564b30">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_060de08df85d383eec2ef9339a0babae366b3e6f\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\aecf7314d2d371860036b1800695b04b97441962\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6e6b94b72d7912a627fb1629c310b2bca9261f06">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_8bd2697310f99a25522ad67c2586ecddb0cfd5eb\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4a4fe268ee54026915facc357c898fca06aea0d6">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_12e3f161d6141aa6ca5edf986d9551a1dcfdf6c7\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\cc9f3f474dad6bc18a39d78e9461c402eae0253a\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="8fe8a8f77d651982ce5e18f6187dc4daf914ac57">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_995594132e08b17a906696c480ec4ec3073a060e\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\9893f115dfbc6085fcbcf7648cc9daba5a401b40\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="2d45b277afdf55bcfdc005c03c0c2f1733aaa1b0">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_a51e84f5d890c61f7a9b20f75e48e1f043fa17ca\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_0e1d0311ba6c58a8bc4496d68f55fccdf9581fc7\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\9e3d82b4cbddbc7b36878d26628746cd82e477de\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="5f519b8c692038a47ee404b6ea6b847f6402000c">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c3f32cb78569ed491e34818103cc10b0e2f4d3fa\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\b2de5be4d1c46284a3379d1fc350a2798787a2f6\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="67eb33110dbacb46a48175b08ae0c96761d2c17d">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_4a4b56d1e88e583abbe695d59c94ebae17ac14ed\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\467890ad19ac9ccbd6510fef81dd913841d8ad06\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bed98ea7af8c5c4202820875e856dd3eb296e22d">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c5118b9d4899288160f7310605e65f0a945b1518\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\d65a1c4c533ff0fa9cedaa62c51f89fd3c5436e6\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ee394a892dd21c03a528139c1e8d4e0e1264ac84">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_5b86b99f7a34d9be51cb80994903919599b29e33\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.gradle\caches\modules-2\files-2.1\com.google.guava\guava\20.0\89507701249388e1ed5ddcf8c41f4ce1be7831ef\guava-20.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="89507701249388e1ed5ddcf8c41f4ce1be7831ef">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\guava-20.0_10160e7183dd5775e0a29a78cc1fb72bc1abde13\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp\okhttp\2.7.2\20f6463eb19ac61960c5d91a094c2f4f0727dc2e\okhttp-2.7.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="20f6463eb19ac61960c5d91a094c2f4f0727dc2e">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\okhttp-2.7.2_2610b7b00b8e532deeee7a6f857a99ed5a65f6e9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\bc32d3c9b52ceff5691b8987d220004897b8f132\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="8040d53ecd4bd895360eafdc25e1c1cc9479e6aa">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c63326bdde246701bf5b68b48d28cad95b441420\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\38d3ccb0985170b1e90c6c741a86526bfe8d01ed\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e820b7be8c035dd522da4bc822e8a76c8e27921a">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_e2fa8257579a3f5bc79607f7159d3215d1477c3e\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\ec41241afc34be9cd5ef52566a1b31c30d4e633c\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="20d6aa9a18ea9833cd2bee95dff7cd303cdb80e4">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_a2f501c4b94520a281fb21faf76113349fab2dcb\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\0bdabf5d9fea7d5ae02a88a58e49898830bc1fc2\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_2da9423edc8c502e93263ec30d76002be336507c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="E:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.2.0\support-annotations-25.2.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4a5a82a027706397fff621b22fd6fa796e91d7c5">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-25.2.0_d6ff75ba3c5f37814b41ef7ceb7364133a0820cc\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\d98f4944b1f05a5bac8c60550a9f044c4aa08fda\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="52339832d252da4328c5ffcacbc205268346362a">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_dd466124d75944362398cfb5d587df966a7c7bbf\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\TianLi\.android\build-cache\c05fed71b25d4102ed6eb62f7e1a287102ec271c\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6555c483abcdcc71ef5f1d47bb1ff3fee35ef1b2">
+        <dex dex="D:\Dropbox\Projects\AndroidStudio\Family\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_5c04c21b3374ddf914ff738941e64e08db7af36b\classes.dex" />
+    </item>
+
+</items>
