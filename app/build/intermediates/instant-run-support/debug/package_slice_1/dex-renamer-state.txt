@@ -1,4 +1,0 @@
-#Sun Oct 15 03:07:17 PDT 2017
-base.0=D\:\\Dropbox\\Projects\\AndroidStudio\\Family\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\5\\slice_1
-renamed.0=classes.dex
-file.0=D\:\\Dropbox\\Projects\\AndroidStudio\\Family\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\5\\slice_1\\classes.dex
