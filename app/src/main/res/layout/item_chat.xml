@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+    >
+    <TextView
+        android:id="@+id/chat_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:layout_marginTop="@dimen/chat_item_margin_vertical"
+        android:layout_marginBottom="@dimen/chat_item_margin_vertical"
+        android:layout_marginLeft="@dimen/chat_item_margin_Horizontal"
+        android:layout_marginRight="@dimen/chat_item_margin_Horizontal"
+        android:text="name"/>
+
+    <TextView
+        android:id="@+id/last_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/chat_item_margin_vertical"
+        android:layout_marginLeft="@dimen/chat_item_margin_Horizontal"
+        android:layout_marginRight="@dimen/chat_item_margin_Horizontal"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:text="last message"/>
+
+</LinearLayout>
