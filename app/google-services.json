@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "272729344123",
+    "firebase_url": "https://family-55a41.firebaseio.com",
+    "project_id": "family-55a41",
+    "storage_bucket": "family-55a41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:272729344123:android:1bcdd64b8effc07d",
+        "android_client_info": {
+          "package_name": "com.litian.family"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "272729344123-h7cgvnt00qf7ljm2eadf1peuns40qolf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.litian.family",
+            "certificate_hash": "a5453b9991766012d75c64346563044da63db687"
+          }
+        },
+        {
+          "client_id": "272729344123-5l7b2lkgn9k33p98kagee2jru88hem4q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoSYJMc93fLKyUwUKFG0qCz2aw0CZ6ZNA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "272729344123-5l7b2lkgn9k33p98kagee2jru88hem4q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

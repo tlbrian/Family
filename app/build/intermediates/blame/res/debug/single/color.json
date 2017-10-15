@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "D:\\Dropbox\\Projects\\AndroidStudio\\Family\\app\\build\\intermediates\\res\\merged\\debug\\color\\common_google_signin_btn_text_light.xml",
+        "source": "C:\\Users\\TianLi\\.android\\build-cache\\9893f115dfbc6085fcbcf7648cc9daba5a401b40\\output\\res\\color\\common_google_signin_btn_text_light.xml"
+    },
+    {
+        "merged": "D:\\Dropbox\\Projects\\AndroidStudio\\Family\\app\\build\\intermediates\\res\\merged\\debug\\color\\common_google_signin_btn_text_dark.xml",
+        "source": "C:\\Users\\TianLi\\.android\\build-cache\\9893f115dfbc6085fcbcf7648cc9daba5a401b40\\output\\res\\color\\common_google_signin_btn_text_dark.xml"
+    },
+    {
+        "merged": "D:\\Dropbox\\Projects\\AndroidStudio\\Family\\app\\build\\intermediates\\res\\merged\\debug\\color\\common_google_signin_btn_tint.xml",
+        "source": "C:\\Users\\TianLi\\.android\\build-cache\\9893f115dfbc6085fcbcf7648cc9daba5a401b40\\output\\res\\color\\common_google_signin_btn_tint.xml"
+    }
+]
