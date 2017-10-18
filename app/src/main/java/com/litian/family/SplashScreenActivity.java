@@ -22,7 +22,7 @@ public class SplashScreenActivity extends Activity
 {
     public static final String PREFS_NAME = "UserPrefs";
     private static long SPLASH_MILLIS = 1000;
-    
+
     
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -41,32 +41,40 @@ public class SplashScreenActivity extends Activity
             LayoutParams.MATCH_PARENT));*/
         setContentView(R.layout.splash_screen);
 
+	    // get data passed in from deep link or notification
+	    CurrentUser.setData(getIntent().getExtras());
+
         MyFirebaseInstanceIDService.getToken();
 
         //init components
         Auth.init();
 	    MyFirestore.init();
 
+        signInWithToken();
+    }
+
+    public void signInWithToken() {
         SharedPreferences profile = getSharedPreferences(PREFS_NAME, 0);
-        String email = profile.getString("email", null);
-        String password = profile.getString("password", null);
+        final String email = profile.getString("email", null);
+        final String password = profile.getString("password", null);
 
         if (email != null && password != null) {
             Auth.getInstance().signIn(email, password, new Auth.SignInListener() {
                 @Override
                 public void onSignInResult(boolean success) {
                     if (success) {
+	                    CurrentUser.getCurrentUserInfoFromDB(email);
                         Intent intent = new Intent(SplashScreenActivity.this,
                                 MainActivity.class);
                         startActivity(intent);
                     }
                     else {
-	                    SharedPreferences sp = getSharedPreferences(PREFS_NAME, 0);
+                        SharedPreferences sp = getSharedPreferences(PREFS_NAME, 0);
 
-	                    SharedPreferences.Editor editor = sp.edit();
-	                    editor.remove("email");
-	                    editor.remove("password");
-	                    editor.commit();
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.remove("email");
+                        editor.remove("password");
+                        editor.apply();
 
                         Intent intent = new Intent(SplashScreenActivity.this,
                                 LoginActivity.class);
@@ -81,7 +89,6 @@ public class SplashScreenActivity extends Activity
 
                 @Override
                 public void run() {
-
                     Intent intent = new Intent(SplashScreenActivity.this,
                             LoginActivity.class);
                     startActivity(intent);

@@ -12,6 +12,7 @@ public class User {
 	String email;
 	String name;
 	List<String> friendUids = new ArrayList<>();
+	private String FCMToken;
 
 	public User() {}
 
@@ -36,7 +37,19 @@ public class User {
 		return name;
 	}
 
+	public String getFCMToken() {
+		return FCMToken;
+	}
+
 	public List<String> getFriendUids() {
 		return friendUids;
+	}
+
+	public void addFriend(String uid) {
+		friendUids.add(uid);
+	}
+
+	public void setFCMToken(String FCMToken) {
+		this.FCMToken = FCMToken;
 	}
 }

@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseUser;
 import com.litian.family.auth.Auth;
 import com.litian.family.firestore.MyFirestore;
+import com.litian.family.messaging.MyFirebaseInstanceIDService;
 import com.litian.family.model.User;
 
 /**
@@ -36,7 +37,7 @@ public class LoginActivity extends Activity {
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
-	private static final String TAG = "LogIn";
+	private static final String TAG = "Login";
 	private static final String PREFS_NAME = "UserPrefs";
 
 	// UI references.
@@ -95,33 +96,13 @@ public class LoginActivity extends Activity {
 			@Override
 			public void onSignInResult(boolean success) {
 				if (success) {
+					showProgress(false);
+
 					// Save the valid email and password to SharePreference
+					saveLoginToSharePrefs(email, password);
+					CurrentUser.getCurrentUserInfoFromDB(email);
 
-					MyFirestore.getInstance().searchUserByEmail(email, new MyFirestore.SearchUserCallback() {
-						@Override
-						public void onSearchUserResult(User user) {
-							if (user == null) {
-								FirebaseUser firebaseUserer = Auth.getInstance().getCurrentUser();
-
-								User newUser = new User(firebaseUserer.getUid(), firebaseUserer.getEmail());
-								MyFirestore.getInstance().addUser(newUser, new MyFirestore.AddUserCallback() {
-									@Override
-									public void onAddUserResult(User user) {
-										if (user != null) {
-											onLoggedInAndGoToChatList(email, password);
-										}
-										else {
-											Log.e(TAG, "failed to add the user to database");
-										}
-									}
-								});
-							}
-							else {
-								Log.d(TAG, "existing user in database: " + user.getEmail());
-								onLoggedInAndGoToChatList(email, password);
-							}
-						}
-					});
+					gotoChatList();
 				} else {
 					Toast.makeText(LoginActivity.this, R.string.auth_failed,
 							Toast.LENGTH_SHORT).show();
@@ -141,13 +122,14 @@ public class LoginActivity extends Activity {
 	    Auth.getInstance().signUp(email, password, new Auth.SignUpListener() {
 		    @Override
 		    public void onSignUpResult(boolean success) {
-				if (success) {
-					showProgress(false);
+			    showProgress(false);
+			    if (success) {
 					//TODO: Send account to firestore
 					FirebaseUser user = Auth.getInstance().getCurrentUser();
 
 					User newUser = new User(user.getUid(), user.getEmail());
-					MyFirestore.getInstance().addUser(newUser, null);
+					newUser.setFCMToken(MyFirebaseInstanceIDService.getToken());
+					MyFirestore.getInstance().createUserAccount(newUser, null);
 				}
 				else {
 					Toast.makeText(LoginActivity.this, R.string.sign_up_failed,
@@ -223,43 +205,40 @@ public class LoginActivity extends Activity {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+	    int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+	    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+	    mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+	            show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+	        @Override
+	        public void onAnimationEnd(Animator animation) {
+	            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+	        }
+	    });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+	    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+	    mProgressView.animate().setDuration(shortAnimTime).alpha(
+	            show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+	        @Override
+	        public void onAnimationEnd(Animator animation) {
+	            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+	        }
+	    });
     }
 
 
-    private void onLoggedInAndGoToChatList(String email, String password) {
+    private void saveLoginToSharePrefs(String email, String password) {
 	    SharedPreferences sp = getSharedPreferences(PREFS_NAME, 0);
 
 	    SharedPreferences.Editor editor = sp.edit();
 	    editor.putString("email", email);
 	    editor.putString("password", password);
-	    editor.commit();
+	    editor.apply();
+    }
 
+
+
+    private void gotoChatList() {
 	    Intent intent = new Intent(LoginActivity.this,
 			    MainActivity.class);
 	    startActivity(intent);

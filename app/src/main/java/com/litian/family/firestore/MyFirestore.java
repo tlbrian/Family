@@ -14,10 +14,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.litian.family.CurrentUser;
 import com.litian.family.auth.Auth;
 import com.litian.family.model.User;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TianLi on 2017/10/13.
@@ -45,7 +48,7 @@ public class MyFirestore {
 		instance.db = FirebaseFirestore.getInstance();
 	}
 
-	public void addUser(final User user, final AddUserCallback listener) {
+	public void createUserAccount(@NonNull final User user, final AddUserCallback listener) {
 		// Add a new document with a generated ID
 		db.collection("users").document(user.getUid())
 				.set(user)
@@ -65,7 +68,7 @@ public class MyFirestore {
 				});
 	}
 
-	public void searchUserByEmail(String email, final SearchUserCallback listener) {
+	public void searchUserByEmail(@NonNull String email, final SearchUserCallback listener) {
 		// Create a reference to the cities collection
 		CollectionReference usersRef = db.collection("users");
 
@@ -95,12 +98,41 @@ public class MyFirestore {
 		});
 	}
 
-	public void updateCMToken(String token) {
+
+	public void sendFriendRequest(@NonNull final User fromUser, @NonNull final User toUser, final SendFriendReqCallback listener) {
+		Map<String, Object> request = new HashMap<>();
+		request.put("from_uid", fromUser.getUid());
+		request.put("from_email", fromUser.getEmail());
+		request.put("to_uid", toUser.getUid());
+		request.put("to_FCMToken", toUser.getFCMToken());
+		request.put("isDone", false);
+
+		// Add a new document with a generated ID
+		db.collection("friend_requests")
+				.add(request)
+				.addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+					@Override
+					public void onSuccess(DocumentReference documentReference) {
+						Log.d(TAG, "friend request sent");
+						if (listener != null) listener.onSendFriendReqResult(toUser);
+					}
+				})
+				.addOnFailureListener(new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Log.w(TAG, "Error adding document", e);
+						if (listener != null) listener.onSendFriendReqResult(null);
+					}
+				});
+	}
+
+
+
+	public void updateFCMToken(@NonNull String token) {
 		FirebaseUser user = Auth.getInstance().getCurrentUser();
 		DocumentReference userRef = db.collection("users").document(user.getUid());
 
-		// Set the "isCapital" field of the city 'DC'
-		userRef .update("CMToken", token)
+		userRef .update("FCMToken", token)
 				.addOnSuccessListener(new OnSuccessListener<Void>() {
 					@Override
 					public void onSuccess(Void aVoid) {
@@ -122,5 +154,9 @@ public class MyFirestore {
 
 	public interface SearchUserCallback {
 		void onSearchUserResult(User user);
+	}
+
+	public interface SendFriendReqCallback {
+		void onSendFriendReqResult(User user);
 	}
 }

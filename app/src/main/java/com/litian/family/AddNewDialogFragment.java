@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -17,6 +18,7 @@ import com.litian.family.model.User;
  * Created by TianLi on 2017/10/14.
  */
 public class AddNewDialogFragment extends DialogFragment {
+	private static final String TAG = "Login";
 	View view;
 
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -34,9 +36,7 @@ public class AddNewDialogFragment extends DialogFragment {
 						String username = username_editText.getText().toString();
 
 						if (!isEmailValid(username)) {
-							CharSequence text = "Email is not valid";
-							int duration = Toast.LENGTH_SHORT;
-							Toast.makeText(getActivity(), text, duration).show();
+							username_editText.setError(getString(R.string.error_invalid_email));
 							return;
 						}
 
@@ -45,11 +45,19 @@ public class AddNewDialogFragment extends DialogFragment {
 							public void onSearchUserResult(User user) {
 								if (user != null) {
 									dismiss();
-									Toast.makeText(getActivity(), "Added user successfully", Toast.LENGTH_SHORT).show();
 
 									//TODO: send a friend request
-
-
+									MyFirestore.getInstance().sendFriendRequest(CurrentUser.get(), user, new MyFirestore.SendFriendReqCallback() {
+										@Override
+										public void onSendFriendReqResult(User user) {
+											if (user != null) {
+												Toast.makeText(getActivity(), "friend request sent", Toast.LENGTH_SHORT).show();
+											}
+											else {
+												Log.e(TAG, "Couldn't add a friend request in database");
+											}
+										}
+									});
 								}
 								else {
 									Toast.makeText(getActivity(), "No such user", Toast.LENGTH_SHORT).show();
