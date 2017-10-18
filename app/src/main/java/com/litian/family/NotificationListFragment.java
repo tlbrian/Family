@@ -13,9 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.litian.family.firestore.MyFirestore;
 import com.litian.family.model.Notification;
+import com.litian.family.model.User;
 
 import java.util.ArrayList;
 
@@ -46,7 +50,7 @@ public class NotificationListFragment extends ListFragment {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// Get the data item for this position
-			Notification notif = getItem(position);
+			final Notification notification = getItem(position);
 			// Check if an existing view is being reused, otherwise inflate the view
 			if (convertView == null) {
 				convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_notification, parent, false);
@@ -55,9 +59,15 @@ public class NotificationListFragment extends ListFragment {
 			// Lookup view for data population
 			TextView messageView = convertView.findViewById(R.id.notif_message);
 			TextView from_user = convertView.findViewById(R.id.from_user);
+			convertView.findViewById(R.id.button_accept_friend).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					acceptFriendRequest(notification);
+				}
+			});
 
 			// Populate the data into the template view using the data object
-			messageView.setText(notif.getMessage());
+			messageView.setText(notification.getMessage());
 //			lastMessage.setText(user.hometown);
 
 			// Return the completed view to render on screen
@@ -87,6 +97,24 @@ public class NotificationListFragment extends ListFragment {
         setListShown(true);
 		
 		//ReceiverDaemon.getInstance();
+	}
+
+
+	private void acceptFriendRequest(Notification notification) {
+		MyFirestore.getInstance().searchUserByUid(notification.getFrom_uid(), new MyFirestore.SearchUserCallback() {
+			@Override
+			public void onSearchUserResult(User user) {
+				if (user != null) {
+					MyFirestore.getInstance().updateFriendList(CurrentUser.get(), user, new MyFirestore.updateFriendListCallBack() {
+						@Override
+						public void onUpdateFriendListResult(User friend) {
+							Toast.makeText(getActivity(), "Friend added! Start chat now", Toast.LENGTH_SHORT);
+
+						}
+					});
+				}
+			}
+		});
 	}
 
 

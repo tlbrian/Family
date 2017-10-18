@@ -5,4 +5,5 @@
     <dimen name="login_width">100dp</dimen>
     <dimen name="chat_item_margin_vertical">5dp</dimen>
     <dimen name="chat_item_margin_Horizontal">10dp</dimen>
+    <dimen name="notification_button_margin_horizontal">10dp</dimen>
 </resources>

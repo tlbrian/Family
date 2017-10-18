@@ -68,6 +68,28 @@ public class MyFirestore {
 				});
 	}
 
+	public void searchUserByUid(@NonNull String uid, final SearchUserCallback listener) {
+		// Create a reference to the cities collection
+		DocumentReference usersRef = db.collection("users").document(uid);
+
+		usersRef.get()
+				.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+					@Override
+					public void onSuccess(DocumentSnapshot documentSnapshot) {
+						Log.d(TAG, "DocumentSnapshot data: " + documentSnapshot.getData());
+						User user = documentSnapshot.toObject(User.class);
+						listener.onSearchUserResult(user);
+					}
+				})
+				.addOnFailureListener(new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Log.w(TAG, "Error reading document", e);
+						if (listener != null) listener.onSearchUserResult(null);
+					}
+				});
+	}
+
 	public void searchUserByEmail(@NonNull String email, final SearchUserCallback listener) {
 		// Create a reference to the cities collection
 		CollectionReference usersRef = db.collection("users");
@@ -127,6 +149,27 @@ public class MyFirestore {
 	}
 
 
+	public void updateFriendList(@NonNull User currentUser, @NonNull final User friend, final updateFriendListCallBack listener) {
+		db.collection("users").document(currentUser.getUid())
+				.update("friendUids", currentUser.getFriendUids())
+				.addOnSuccessListener(new OnSuccessListener<Void>() {
+					@Override
+					public void onSuccess(Void aVoid) {
+						Log.d(TAG, "DocumentSnapshot successfully updated!");
+						if (listener != null) listener.onUpdateFriendListResult(friend);
+					}
+				})
+				.addOnFailureListener(new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Log.w(TAG, "Error updating document", e);
+						if (listener != null) listener.onUpdateFriendListResult(null);
+					}
+				});
+	}
+
+
+
 
 	public void updateFCMToken(@NonNull String token) {
 		FirebaseUser user = Auth.getInstance().getCurrentUser();
@@ -147,24 +190,7 @@ public class MyFirestore {
 				});
 	}
 
-	public void updateFriendList(@NonNull User currentUser, @NonNull final User friend, final updateFriendListCallBack listener) {
-		db.collection("users").document(currentUser.getUid())
-				.update("friendUids", currentUser.getFriendUids())
-				.addOnSuccessListener(new OnSuccessListener<Void>() {
-					@Override
-					public void onSuccess(Void aVoid) {
-						Log.d(TAG, "DocumentSnapshot successfully updated!");
-						if (listener != null) listener.onUpdateFriendListResult(friend);
-					}
-				})
-				.addOnFailureListener(new OnFailureListener() {
-					@Override
-					public void onFailure(@NonNull Exception e) {
-						Log.w(TAG, "Error updating document", e);
-						if (listener != null) listener.onUpdateFriendListResult(null);
-					}
-				});
-	}
+
 
 
 	public interface AddUserCallback {

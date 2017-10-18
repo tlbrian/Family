@@ -38,6 +38,7 @@
     <string name="logout">Log out</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="accept">Accept</string>
 
 
 </resources>

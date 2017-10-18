@@ -92,6 +92,11 @@ public class ChatListFragment extends ListFragment implements OnQueryTextListene
 	}
 
 
+	public void addFriendToList(User user) {
+		mAdapter.add(user);
+	}
+
+
 
     //Menu
 //	@Override
