@@ -147,6 +147,25 @@ public class MyFirestore {
 				});
 	}
 
+	public void updateFriendList(@NonNull User currentUser, @NonNull final User friend, final updateFriendListCallBack listener) {
+		db.collection("users").document(currentUser.getUid())
+				.update("friendUids", currentUser.getFriendUids())
+				.addOnSuccessListener(new OnSuccessListener<Void>() {
+					@Override
+					public void onSuccess(Void aVoid) {
+						Log.d(TAG, "DocumentSnapshot successfully updated!");
+						if (listener != null) listener.onUpdateFriendListResult(friend);
+					}
+				})
+				.addOnFailureListener(new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Log.w(TAG, "Error updating document", e);
+						if (listener != null) listener.onUpdateFriendListResult(null);
+					}
+				});
+	}
+
 
 	public interface AddUserCallback {
 		void onAddUserResult(User user);
@@ -158,5 +177,9 @@ public class MyFirestore {
 
 	public interface SendFriendReqCallback {
 		void onSendFriendReqResult(User user);
+	}
+
+	public interface updateFriendListCallBack {
+		void onUpdateFriendListResult(User friend);
 	}
 }

@@ -11,7 +11,7 @@ public class User {
 	String uid;
 	String email;
 	String name;
-	List<String> friendUids = new ArrayList<>();
+	List<String> friendUids = new ArrayList<>(20);
 	private String FCMToken;
 
 	public User() {}
