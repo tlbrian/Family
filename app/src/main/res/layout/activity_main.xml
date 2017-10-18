@@ -1,17 +1,20 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:baselineAligned="false"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity" >
-    
-	<fragment
-		class="com.litian.family.ChatListLoaderFragment"
-        android:id="@+id/chatlist" 
-        android:layout_weight="1"
-        android:layout_width="0px" 
-        android:layout_height="match_parent" />
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
+	<android.support.v4.view.ViewPager android:id="@+id/container"
+									   android:layout_width="match_parent"
+									   android:layout_height="0dp"
+									   android:layout_weight="1"
+									   tools:context="com.litian.family.MainActivity"/>
+
+	<com.astuetz.PagerSlidingTabStrip
+		android:id="@+id/tabs"
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:layout_weight="0"/>
 
 </LinearLayout>
