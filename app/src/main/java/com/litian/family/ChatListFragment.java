@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.litian.family.model.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChatListFragment extends ListFragment implements OnQueryTextListener {
 
@@ -83,8 +84,13 @@ public class ChatListFragment extends ListFragment implements OnQueryTextListene
 	    test.add(new User("test1@lt.com"));
 	    test.add(new User("test2@lt.com"));
         mAdapter = new MyAdapter(getActivity(), test);
-        setListAdapter(mAdapter);
-		
+	    List<String> uids = CurrentUser.get().getFriendUids();
+	    for (String uid : uids) {
+		    mAdapter.add(new User(uid, null));
+	    }
+
+	    setListAdapter(mAdapter);
+
         // Start out with a progress indicator.
         setListShown(true);
 		

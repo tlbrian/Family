@@ -105,10 +105,13 @@ public class NotificationListFragment extends ListFragment {
 			@Override
 			public void onSearchUserResult(User user) {
 				if (user != null) {
+					CurrentUser.get().addFriend(user.getUid());
 					MyFirestore.getInstance().updateFriendList(CurrentUser.get(), user, new MyFirestore.updateFriendListCallBack() {
 						@Override
 						public void onUpdateFriendListResult(User friend) {
 							Toast.makeText(getActivity(), "Friend added! Start chat now", Toast.LENGTH_SHORT);
+
+							// TODO: update ChatList
 
 						}
 					});
