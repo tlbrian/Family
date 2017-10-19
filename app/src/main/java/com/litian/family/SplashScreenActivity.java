@@ -44,13 +44,15 @@ public class SplashScreenActivity extends Activity
             LayoutParams.MATCH_PARENT));*/
         setContentView(R.layout.splash_screen);
 
-	    // get data passed in from deep link or notification
-	    CurrentUser.setData(getIntent().getExtras());
 
         // init components
+	    UserProfile.init();
         Auth.init();
 	    MyFirestore.init();
 	    MyFirebaseInstanceIDService.getToken();
+
+	    // get data passed in from deep link or notification
+	    UserProfile.getInstance().setData(getIntent().getExtras());
 
 	    // try sign in or go to LoginActivity
         signInWithToken();
@@ -71,7 +73,7 @@ public class SplashScreenActivity extends Activity
 		                    public void onComplete(User data) {
 			                    if (data != null) {
 				                    Log.d(TAG, "Log in success");
-				                    CurrentUser.set(data);
+				                    UserProfile.set(data);
 				                    gotoActivity(MainActivity.class);
 			                    }
 			                    else {

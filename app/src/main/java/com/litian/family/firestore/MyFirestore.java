@@ -131,6 +131,9 @@ public class MyFirestore {
 	}
 
 
+
+
+
 	public void sendFriendRequest(@NonNull final User fromUser, @NonNull final User toUser, final OnAccessDatabase<User> listener) {
 		Map<String, Object> request = new HashMap<>();
 		request.put("from_uid", fromUser.getUid());
@@ -205,9 +208,10 @@ public class MyFirestore {
 	}
 
 
-	public void listenToFriendReqDB(User toUser) {
+	public void listenToDatabaseEvents(final User user) {
+		// be notified when friend accept the request
 		db.collection(friendReqCollectionName)
-				.whereEqualTo("from_uid", toUser.getUid())
+				.whereEqualTo("from_uid", user.getUid())
 				.addSnapshotListener(new EventListener<QuerySnapshot>() {
 					@Override
 					public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -221,6 +225,37 @@ public class MyFirestore {
 							switch (dc.getType()) {
 								case ADDED:
 									Log.d(TAG, "New: " + dc.getDocument().getData());
+									break;
+								case MODIFIED:
+									Log.d(TAG, "Modified: " + dc.getDocument().getData());
+
+									break;
+								case REMOVED:
+									Log.d(TAG, "Removed: " + dc.getDocument().getData());
+									break;
+							}
+						}
+
+					}
+				});
+
+		// be notified when receiving a friend request
+		db.collection(friendReqCollectionName)
+				.whereEqualTo("to_uid", user.getUid())
+				.addSnapshotListener(new EventListener<QuerySnapshot>() {
+					@Override
+					public void onEvent(@Nullable QuerySnapshot snapshots,
+					                    @Nullable FirebaseFirestoreException e) {
+						if (e != null) {
+							Log.w(TAG, "listen:error", e);
+							return;
+						}
+
+						for (DocumentChange dc : snapshots.getDocumentChanges()) {
+							switch (dc.getType()) {
+								case ADDED:
+									Log.d(TAG, "New: " + dc.getDocument().getData());
+									user.addNotification(dc.getDocument().toObject(Notification.class));
 									break;
 								case MODIFIED:
 									Log.d(TAG, "Modified: " + dc.getDocument().getData());

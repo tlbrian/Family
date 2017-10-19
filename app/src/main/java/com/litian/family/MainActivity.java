@@ -141,11 +141,16 @@ public class MainActivity extends Activity {
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a PlaceholderFragment (defined as a static inner class below).
-			if (position == 0) {
-//				return PlaceholderFragment.newInstance(position + 1);
-				return new ChatListFragment();
+			switch (position) {
+				case 0:
+					return new ChatListFragment();
+				case 1:
+					return new NotificationListFragment();
+				case 2:
+
+				default:
+					return new Fragment();
 			}
-			return new NotificationListFragment();
 		}
 
 		@Override

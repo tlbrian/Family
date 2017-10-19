@@ -8,10 +8,11 @@ import java.util.List;
  */
 
 public class User {
-	String uid;
-	String email;
-	String name;
-	List<String> friendUids;
+	private String uid;
+	private String email;
+	private String name;
+	private List<String> friendUids;
+	private List<Notification> notifications;
 	private String FCMToken;
 
 	public User() {}
@@ -19,12 +20,14 @@ public class User {
 	public User(String email) {
 		this.email = email;
 		this.friendUids = new ArrayList<>(20);
+		this.notifications = new ArrayList<>();
 	}
 
 	public User(String uid, String email) {
 		this.uid = uid;
 		this.email = email;
 		this.friendUids = new ArrayList<>(20);
+		this.notifications = new ArrayList<>();
 	}
 
 	public String getUid() {
@@ -48,7 +51,15 @@ public class User {
 	}
 
 	public void addFriend(String uid) {
-		friendUids.add(uid);
+		friendUids.add(0, uid);
+	}
+
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void addNotification(Notification notification) {
+		notifications.add(0, notification);
 	}
 
 	public void setFCMToken(String FCMToken) {

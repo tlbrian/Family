@@ -47,7 +47,7 @@ public class AddNewDialogFragment extends DialogFragment {
 									dismiss();
 
 									//TODO: send a friend request
-									MyFirestore.getInstance().sendFriendRequest(CurrentUser.get(), data, new MyFirestore.OnAccessDatabase<User>() {
+									MyFirestore.getInstance().sendFriendRequest(UserProfile.get(), data, new MyFirestore.OnAccessDatabase<User>() {
 										@Override
 										public void onComplete(User data) {
 											if (data != null) {

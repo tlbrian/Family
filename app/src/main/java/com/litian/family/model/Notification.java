@@ -7,11 +7,11 @@ import java.util.List;
  */
 
 public class Notification {
-	String from_uid;
-	String to_uid;
-	String toFCM_Token;
-	String message;
-	boolean isDone;
+	private String from_uid;
+	private String to_uid;
+	private String toFCM_Token;
+	private String message;
+	private boolean isDone;
 	private String from_FCMToken;
 
 	public Notification() {}

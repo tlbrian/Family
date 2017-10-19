@@ -25,7 +25,7 @@ import java.util.List;
 public class ChatListFragment extends ListFragment implements OnQueryTextListener {
 
 	public static final String PREFS_NAME = "UserPrefs";
-	private static final String TAG = "Main";
+	private static final String TAG = "ChatList";
 
 //	int mCurCheckPosition = 0;
 	MyAdapter mAdapter;
@@ -85,7 +85,7 @@ public class ChatListFragment extends ListFragment implements OnQueryTextListene
 	    test.add(new User("test1@lt.com"));
 	    test.add(new User("test2@lt.com"));
         mAdapter = new MyAdapter(getActivity(), test);
-	    List<String> uids = CurrentUser.get().getFriendUids();
+	    List<String> uids = UserProfile.get().getFriendUids();
 	    if (uids != null) {
 		    for (String uid : uids) {
 			    mAdapter.add(new User(uid, null));
@@ -93,6 +93,8 @@ public class ChatListFragment extends ListFragment implements OnQueryTextListene
 	    }
 
 	    setListAdapter(mAdapter);
+
+
 
         // Start out with a progress indicator.
         setListShown(true);
