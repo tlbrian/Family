@@ -25,12 +25,13 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 		sendRegistrationToServer(refreshedToken);
 	}
 
-	public void sendRegistrationToServer(String token) {
+	public static void sendRegistrationToServer(String token) {
 		MyFirestore.getInstance().updateFCMToken(token);
 	}
 
 	public static String getToken() {
 		String token = FirebaseInstanceId.getInstance().getToken();
+		sendRegistrationToServer(token);
 		Log.d(TAG, "getToken: " + token);
 		return token;
 	}

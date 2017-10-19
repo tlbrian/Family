@@ -1,6 +1,7 @@
 package com.litian.family.firestore;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -9,15 +10,19 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.litian.family.CurrentUser;
 import com.litian.family.auth.Auth;
+import com.litian.family.model.Notification;
 import com.litian.family.model.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +32,12 @@ import java.util.Map;
  */
 
 public class MyFirestore {
-	private static final String TAG = "Auth";
+	private static final String TAG = "MyFireStore";
+
+	private static final String userCollectionName = "users";
+	private static final String friendReqCollectionName = "friend_requests";
+
+
 
 	private static MyFirestore instance;
 
@@ -48,29 +58,29 @@ public class MyFirestore {
 		instance.db = FirebaseFirestore.getInstance();
 	}
 
-	public void createUserAccount(@NonNull final User user, final AddUserCallback listener) {
+	public void createUserAccount(@NonNull final User user, final OnAccessDatabase<User> listener) {
 		// Add a new document with a generated ID
-		db.collection("users").document(user.getUid())
+		db.collection(userCollectionName).document(user.getUid())
 				.set(user)
 				.addOnSuccessListener(new OnSuccessListener<Void>() {
 					@Override
 					public void onSuccess(Void aVoid) {
 						Log.d(TAG, "DocumentSnapshot added with ID: " + user.getUid());
-						if (listener != null) listener.onAddUserResult(user);
+						if (listener != null) listener.onComplete(user);
 					}
 				})
 				.addOnFailureListener(new OnFailureListener() {
 					@Override
 					public void onFailure(@NonNull Exception e) {
 						Log.w(TAG, "Error adding document", e);
-						if (listener != null) listener.onAddUserResult(null);
+						if (listener != null) listener.onComplete(null);
 					}
 				});
 	}
 
-	public void searchUserByUid(@NonNull String uid, final SearchUserCallback listener) {
+	public void searchUserByUid(@NonNull String uid, final OnAccessDatabase<User> listener) {
 		// Create a reference to the cities collection
-		DocumentReference usersRef = db.collection("users").document(uid);
+		DocumentReference usersRef = db.collection(userCollectionName).document(uid);
 
 		usersRef.get()
 				.addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -78,21 +88,21 @@ public class MyFirestore {
 					public void onSuccess(DocumentSnapshot documentSnapshot) {
 						Log.d(TAG, "DocumentSnapshot data: " + documentSnapshot.getData());
 						User user = documentSnapshot.toObject(User.class);
-						listener.onSearchUserResult(user);
+						listener.onComplete(user);
 					}
 				})
 				.addOnFailureListener(new OnFailureListener() {
 					@Override
 					public void onFailure(@NonNull Exception e) {
 						Log.w(TAG, "Error reading document", e);
-						if (listener != null) listener.onSearchUserResult(null);
+						if (listener != null) listener.onComplete(null);
 					}
 				});
 	}
 
-	public void searchUserByEmail(@NonNull String email, final SearchUserCallback listener) {
+	public void searchUserByEmail(@NonNull String email, final OnAccessDatabase<User> listener) {
 		// Create a reference to the cities collection
-		CollectionReference usersRef = db.collection("users");
+		CollectionReference usersRef = db.collection(userCollectionName);
 
 		// Create a query against the collection.
 		Query query = usersRef.whereEqualTo("email", email);
@@ -107,21 +117,21 @@ public class MyFirestore {
 						DocumentSnapshot document = documents.get(0);
 						User user = document.toObject(User.class);
 						Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-						listener.onSearchUserResult(user);
+						listener.onComplete(user);
 					} else {
 						Log.d(TAG, "No such document");
-						listener.onSearchUserResult(null);
+						listener.onComplete(null);
 					}
 				} else {
 					Log.d(TAG, "get failed with ", task.getException());
-					listener.onSearchUserResult(null);
+					listener.onComplete(null);
 				}
 			}
 		});
 	}
 
 
-	public void sendFriendRequest(@NonNull final User fromUser, @NonNull final User toUser, final SendFriendReqCallback listener) {
+	public void sendFriendRequest(@NonNull final User fromUser, @NonNull final User toUser, final OnAccessDatabase<User> listener) {
 		Map<String, Object> request = new HashMap<>();
 		request.put("from_uid", fromUser.getUid());
 		request.put("from_email", fromUser.getEmail());
@@ -130,40 +140,154 @@ public class MyFirestore {
 		request.put("isDone", false);
 
 		// Add a new document with a generated ID
-		db.collection("friend_requests")
+		db.collection(friendReqCollectionName)
 				.add(request)
 				.addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
 					@Override
 					public void onSuccess(DocumentReference documentReference) {
 						Log.d(TAG, "friend request sent");
-						if (listener != null) listener.onSendFriendReqResult(toUser);
+						if (listener != null) listener.onComplete(toUser);
 					}
 				})
 				.addOnFailureListener(new OnFailureListener() {
 					@Override
 					public void onFailure(@NonNull Exception e) {
 						Log.w(TAG, "Error adding document", e);
-						if (listener != null) listener.onSendFriendReqResult(null);
+						if (listener != null) listener.onComplete(null);
 					}
 				});
 	}
 
 
-	public void updateFriendList(@NonNull User currentUser, @NonNull final User friend, final updateFriendListCallBack listener) {
-		db.collection("users").document(currentUser.getUid())
+	public void updateFriendRequest(@NonNull final String from_uid, @NonNull final String to_uid, final OnAccessDatabase<Notification> listener) {
+		Query query = db.collection(friendReqCollectionName)
+				.whereEqualTo("from_uid", from_uid)
+				.whereEqualTo("to_uid", to_uid)
+				.whereEqualTo("isDone", false);
+
+		// Add a new document with a generated ID
+		query.get()
+				.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+					@Override
+					public void onSuccess(QuerySnapshot querySnapshot) {
+						Log.d(TAG, "Friend request retrieved");
+						List<DocumentSnapshot> documents = querySnapshot.getDocuments();
+						if (documents != null && documents.size() > 0) {
+							final DocumentSnapshot documentSnapshot = documents.get(0);
+							documentSnapshot.getReference().update("isDone", true)
+									.addOnSuccessListener(new OnSuccessListener<Void>() {
+										@Override
+										public void onSuccess(Void aVoid) {
+											Log.d(TAG, "DocumentSnapshot successfully updated!");
+											Notification notification = documentSnapshot.toObject(Notification.class);
+											if (listener != null) listener.onComplete(notification);
+										}
+									})
+									.addOnFailureListener(new OnFailureListener() {
+										@Override
+										public void onFailure(@NonNull Exception e) {
+											Log.w(TAG, "Error updating document", e);
+										}
+									});
+						} else {
+							Log.d(TAG, "No such document");
+							if (listener != null) listener.onComplete(null);
+						}
+					}
+				})
+				.addOnFailureListener(new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Log.w(TAG, "Error adding document", e);
+						if (listener != null) listener.onComplete(null);
+					}
+				});
+	}
+
+
+	public void listenToFriendReqDB(User toUser) {
+		db.collection(friendReqCollectionName)
+				.whereEqualTo("from_uid", toUser.getUid())
+				.addSnapshotListener(new EventListener<QuerySnapshot>() {
+					@Override
+					public void onEvent(@Nullable QuerySnapshot snapshots,
+					                    @Nullable FirebaseFirestoreException e) {
+						if (e != null) {
+							Log.w(TAG, "listen:error", e);
+							return;
+						}
+
+						for (DocumentChange dc : snapshots.getDocumentChanges()) {
+							switch (dc.getType()) {
+								case ADDED:
+									Log.d(TAG, "New: " + dc.getDocument().getData());
+									break;
+								case MODIFIED:
+									Log.d(TAG, "Modified: " + dc.getDocument().getData());
+									break;
+								case REMOVED:
+									Log.d(TAG, "Removed: " + dc.getDocument().getData());
+									break;
+							}
+						}
+
+					}
+				});
+	}
+
+
+	public void searchFriendRequestsToUser(@NonNull final User toUser, final OnAccessDatabase<List<Notification>> listener) {
+		Query query = db.collection(friendReqCollectionName)
+				.whereEqualTo("to_uid", toUser.getUid())
+				.whereEqualTo("isDone", false);
+
+		// Add a new document with a generated ID
+		query.get()
+				.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+					@Override
+					public void onSuccess(QuerySnapshot querySnapshot) {
+						Log.d(TAG, "Friend request retrieved");
+						List<DocumentSnapshot> documents = querySnapshot.getDocuments();
+						if (documents != null) {
+							List<Notification> notifications = new ArrayList<>(documents.size());
+							for (DocumentSnapshot documentSnapshot : documents) {
+								notifications.add(documentSnapshot.toObject(Notification.class));
+							}
+							listener.onComplete(notifications);
+						} else {
+							Log.d(TAG, "No such document");
+							listener.onComplete(null);
+						}
+					}
+				})
+				.addOnFailureListener(new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Log.w(TAG, "Error adding document", e);
+						if (listener != null) listener.onComplete(null);
+					}
+				});
+	}
+
+
+
+
+
+	public void updateFriendList(@NonNull User currentUser, @NonNull final User friend, final OnAccessDatabase<User> listener) {
+		db.collection(userCollectionName).document(currentUser.getUid())
 				.update("friendUids", currentUser.getFriendUids())
 				.addOnSuccessListener(new OnSuccessListener<Void>() {
 					@Override
 					public void onSuccess(Void aVoid) {
 						Log.d(TAG, "DocumentSnapshot successfully updated!");
-						if (listener != null) listener.onUpdateFriendListResult(friend);
+						if (listener != null) listener.onComplete(friend);
 					}
 				})
 				.addOnFailureListener(new OnFailureListener() {
 					@Override
 					public void onFailure(@NonNull Exception e) {
 						Log.w(TAG, "Error updating document", e);
-						if (listener != null) listener.onUpdateFriendListResult(null);
+						if (listener != null) listener.onComplete(null);
 					}
 				});
 	}
@@ -173,7 +297,7 @@ public class MyFirestore {
 
 	public void updateFCMToken(@NonNull String token) {
 		FirebaseUser user = Auth.getInstance().getCurrentUser();
-		DocumentReference userRef = db.collection("users").document(user.getUid());
+		DocumentReference userRef = db.collection(userCollectionName).document(user.getUid());
 
 		userRef .update("FCMToken", token)
 				.addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -193,19 +317,7 @@ public class MyFirestore {
 
 
 
-	public interface AddUserCallback {
-		void onAddUserResult(User user);
-	}
-
-	public interface SearchUserCallback {
-		void onSearchUserResult(User user);
-	}
-
-	public interface SendFriendReqCallback {
-		void onSendFriendReqResult(User user);
-	}
-
-	public interface updateFriendListCallBack {
-		void onUpdateFriendListResult(User friend);
+	public interface OnAccessDatabase<T> {
+		void onComplete(T data);
 	}
 }

@@ -40,17 +40,17 @@ public class AddNewDialogFragment extends DialogFragment {
 							return;
 						}
 
-						MyFirestore.getInstance().searchUserByEmail(username, new MyFirestore.SearchUserCallback() {
+						MyFirestore.getInstance().searchUserByEmail(username, new MyFirestore.OnAccessDatabase<User>() {
 							@Override
-							public void onSearchUserResult(User user) {
-								if (user != null) {
+							public void onComplete(User data) {
+								if (data != null) {
 									dismiss();
 
 									//TODO: send a friend request
-									MyFirestore.getInstance().sendFriendRequest(CurrentUser.get(), user, new MyFirestore.SendFriendReqCallback() {
+									MyFirestore.getInstance().sendFriendRequest(CurrentUser.get(), data, new MyFirestore.OnAccessDatabase<User>() {
 										@Override
-										public void onSendFriendReqResult(User user) {
-											if (user != null) {
+										public void onComplete(User data) {
+											if (data != null) {
 												Toast.makeText(getActivity(), "friend request sent", Toast.LENGTH_SHORT).show();
 											}
 											else {

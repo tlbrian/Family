@@ -98,11 +98,25 @@ public class LoginActivity extends Activity {
 				if (success) {
 					showProgress(false);
 
-					// Save the valid email and password to SharePreference
-					saveLoginToSharePrefs(email, password);
-					CurrentUser.getCurrentUserInfoFromDB(email);
+					MyFirestore.getInstance().searchUserByEmail(email, new MyFirestore.OnAccessDatabase<User>() {
+						@Override
+						public void onComplete(User user) {
+							if (user != null) {
+								Log.d(TAG, "Log in success");
 
-					gotoChatList();
+								// Save the valid email and password to SharePreference
+								saveLoginToSharePrefs(email, password);
+
+								CurrentUser.set(user);
+
+								gotoChatList();
+							}
+							else {
+								Log.d(TAG, "Log in failed, no user in database");
+								gotoChatList();
+							}
+						}
+					});
 				} else {
 					Toast.makeText(LoginActivity.this, R.string.auth_failed,
 							Toast.LENGTH_SHORT).show();

@@ -9,11 +9,11 @@ import android.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,12 +22,14 @@ import com.litian.family.model.Notification;
 import com.litian.family.model.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NotificationListFragment extends ListFragment {
 
 	public static final String PREFS_NAME = "UserPrefs";
+	private static final String TAG = "Main";
 
-//	int mCurCheckPosition = 0;
+	//	int mCurCheckPosition = 0;
 	MyAdapter mAdapter;
 	
 	String mCurFilter;
@@ -94,30 +96,38 @@ public class NotificationListFragment extends ListFragment {
         setListAdapter(mAdapter);
 		
         // Start out with a progress indicator.
-        setListShown(true);
-		
-		//ReceiverDaemon.getInstance();
+        setListShown(false);
+
+	    MyFirestore.getInstance().searchFriendRequestsToUser(CurrentUser.get(), new MyFirestore.OnAccessDatabase<List<Notification>>() {
+		    @Override
+		    public void onComplete(List<Notification> data) {
+			    mAdapter.addAll(data);
+			    setListShown(true);
+		    }
+	    });
+
 	}
 
 
 	private void acceptFriendRequest(Notification notification) {
-		MyFirestore.getInstance().searchUserByUid(notification.getFrom_uid(), new MyFirestore.SearchUserCallback() {
+		MyFirestore.getInstance().searchUserByUid(notification.getFrom_uid(), new MyFirestore.OnAccessDatabase<User>() {
 			@Override
-			public void onSearchUserResult(User user) {
-				if (user != null) {
-					CurrentUser.get().addFriend(user.getUid());
-					MyFirestore.getInstance().updateFriendList(CurrentUser.get(), user, new MyFirestore.updateFriendListCallBack() {
+			public void onComplete(User data) {
+				if (data != null) {
+					CurrentUser.get().addFriend(data.getUid());
+					MyFirestore.getInstance().updateFriendList(CurrentUser.get(), data, new MyFirestore.OnAccessDatabase<User>() {
 						@Override
-						public void onUpdateFriendListResult(User friend) {
-							Toast.makeText(getActivity(), "Friend added! Start chat now", Toast.LENGTH_SHORT);
+						public void onComplete(User data) {
+							Toast.makeText(getActivity(), "Friend added Start chat now!", Toast.LENGTH_SHORT).show();
 
 							// TODO: update ChatList
-
 						}
 					});
 				}
 			}
 		});
+
+		MyFirestore.getInstance().updateFriendRequest(notification.getFrom_uid(), CurrentUser.get().getUid(), null);
 	}
 
 

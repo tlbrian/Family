@@ -11,18 +11,20 @@ public class User {
 	String uid;
 	String email;
 	String name;
-	List<String> friendUids = new ArrayList<>(20);
+	List<String> friendUids;
 	private String FCMToken;
 
 	public User() {}
 
 	public User(String email) {
 		this.email = email;
+		this.friendUids = new ArrayList<>(20);
 	}
 
 	public User(String uid, String email) {
 		this.uid = uid;
 		this.email = email;
+		this.friendUids = new ArrayList<>(20);
 	}
 
 	public String getUid() {

@@ -28,21 +28,6 @@ public class CurrentUser {
 		currentUser = user;
 	}
 
-	public static void getCurrentUserInfoFromDB(String email) {
-		MyFirestore.getInstance().searchUserByEmail(email, new MyFirestore.SearchUserCallback() {
-			@Override
-			public void onSearchUserResult(User user) {
-				if (user != null) {
-					Log.d(TAG, "find user in database: " + user.getEmail());
-					CurrentUser.set(user);
-				}
-				else {
-					Log.e(TAG, "Couldn't find user in database" + user.getEmail());
-				}
-			}
-		});
-	}
-
 	public static Bundle getData() {
 		return data;
 	}

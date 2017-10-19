@@ -8,7 +8,10 @@ import java.util.List;
 
 public class Notification {
 	String from_uid;
+	String to_uid;
+	String toFCM_Token;
 	String message;
+	boolean isDone;
 	private String from_FCMToken;
 
 	public Notification() {}
@@ -32,6 +35,18 @@ public class Notification {
 
 	public String getFrom_FCMToken() {
 		return from_FCMToken;
+	}
+
+	public String getTo_uid() {
+		return to_uid;
+	}
+
+	public String getToFCM_Token() {
+		return toFCM_Token;
+	}
+
+	public boolean isDone() {
+		return isDone;
 	}
 
 	public void setFrom_FCMToken(String from_FCMToken) {

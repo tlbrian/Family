@@ -10,18 +10,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.litian.family.auth.Auth;
 import com.litian.family.firestore.MyFirestore;
 import com.litian.family.messaging.MyFirebaseInstanceIDService;
+import com.litian.family.model.User;
 
 
 public class SplashScreenActivity extends Activity
 {
     public static final String PREFS_NAME = "UserPrefs";
-    private static long SPLASH_MILLIS = 1000;
+	private static final String TAG = "Splash";
+	private static long SPLASH_MILLIS = 1000;
 
     
     @Override
@@ -44,12 +47,12 @@ public class SplashScreenActivity extends Activity
 	    // get data passed in from deep link or notification
 	    CurrentUser.setData(getIntent().getExtras());
 
-        MyFirebaseInstanceIDService.getToken();
-
-        //init components
+        // init components
         Auth.init();
 	    MyFirestore.init();
+	    MyFirebaseInstanceIDService.getToken();
 
+	    // try sign in or go to LoginActivity
         signInWithToken();
     }
 
@@ -63,10 +66,20 @@ public class SplashScreenActivity extends Activity
                 @Override
                 public void onSignInResult(boolean success) {
                     if (success) {
-	                    CurrentUser.getCurrentUserInfoFromDB(email);
-                        Intent intent = new Intent(SplashScreenActivity.this,
-                                MainActivity.class);
-                        startActivity(intent);
+	                    MyFirestore.getInstance().searchUserByEmail(email, new MyFirestore.OnAccessDatabase<User>() {
+		                    @Override
+		                    public void onComplete(User data) {
+			                    if (data != null) {
+				                    Log.d(TAG, "Log in success");
+				                    CurrentUser.set(data);
+				                    gotoActivity(MainActivity.class);
+			                    }
+			                    else {
+				                    Log.d(TAG, "Log in failed, no user in database");
+				                    gotoActivity(LoginActivity.class);
+			                    }
+		                    }
+	                    });
                     }
                     else {
                         SharedPreferences sp = getSharedPreferences(PREFS_NAME, 0);
@@ -76,9 +89,7 @@ public class SplashScreenActivity extends Activity
                         editor.remove("password");
                         editor.apply();
 
-                        Intent intent = new Intent(SplashScreenActivity.this,
-                                LoginActivity.class);
-                        startActivity(intent);
+	                    gotoActivity(LoginActivity.class);
                     }
                 }
             });
@@ -89,14 +100,18 @@ public class SplashScreenActivity extends Activity
 
                 @Override
                 public void run() {
-                    Intent intent = new Intent(SplashScreenActivity.this,
-                            LoginActivity.class);
-                    startActivity(intent);
+					gotoActivity(LoginActivity.class);
 
                 }
 
             }, SPLASH_MILLIS);
         }
+    }
+
+    public void gotoActivity(Class<? extends Activity> activity) {
+	    Intent intent = new Intent(SplashScreenActivity.this,
+			    activity);
+	    startActivity(intent);
     }
     
 }
