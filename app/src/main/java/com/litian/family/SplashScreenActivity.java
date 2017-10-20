@@ -73,7 +73,7 @@ public class SplashScreenActivity extends Activity
 		                    public void onComplete(User data) {
 			                    if (data != null) {
 				                    Log.d(TAG, "Log in success");
-				                    UserProfile.set(data);
+				                    UserProfile.getInstance().setCurrentUser(data);
 				                    gotoActivity(MainActivity.class);
 			                    }
 			                    else {

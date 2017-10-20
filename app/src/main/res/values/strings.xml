@@ -39,6 +39,10 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="accept">Accept</string>
+    <string name="no_friends">No Friends</string>
+    <string name="friend_added">Friend added. Start chatting now!</string>
+    <string name="added">added</string>
+    <string name="already_a_friend">You are already friends</string>
 
 
 </resources>

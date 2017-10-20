@@ -107,7 +107,7 @@ public class LoginActivity extends Activity {
 								// Save the valid email and password to SharePreference
 								saveLoginToSharePrefs(email, password);
 
-								UserProfile.set(user);
+								UserProfile.getInstance().setCurrentUser(user);
 
 								gotoChatList();
 							}

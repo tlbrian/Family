@@ -3,6 +3,7 @@ package com.litian.family;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.litian.family.model.Notification;
 import com.litian.family.model.User;
 
 /**
@@ -15,10 +16,9 @@ public class UserProfile {
 
 	private static UserProfile instance;
 
-	private static User currentUser;
+	private User currentUser;
 	private Bundle data;
-	private ChatListFragment.MyAdapter chatListAdapter;
-	private NotificationListFragment.MyAdapter notificationListAdapter;
+	private boolean isFriendListDirty;
 
 	private UserProfile(){}
 
@@ -33,12 +33,12 @@ public class UserProfile {
 		return instance;
 	}
 
-	public static User get() {
+	public User getCurrentUser() {
 		return currentUser;
 	}
 
-	public static void set(User user) {
-		currentUser = user;
+	public void setCurrentUser(User user) {
+		this.currentUser = user;
 	}
 
 	public Bundle getData() {
@@ -48,5 +48,18 @@ public class UserProfile {
 	public void setData(Bundle b) {
 		Log.d(TAG, "bundle payload:" + b);
 		data = b;
+	}
+
+	public void addFriend(String uid) {
+		isFriendListDirty = true;
+		currentUser.addFriend(uid);
+	}
+
+	public boolean isFriendListDirty() {
+		return isFriendListDirty;
+	}
+
+	public void setFriendListDirty(boolean friendListDirty) {
+		isFriendListDirty = friendListDirty;
 	}
 }

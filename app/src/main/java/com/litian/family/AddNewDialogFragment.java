@@ -40,6 +40,10 @@ public class AddNewDialogFragment extends DialogFragment {
 							return;
 						}
 
+//						if (isAlreadyFriend(username)) {
+//							username_editText.setError(getString(R.string.already_a_friend));
+//						}
+
 						MyFirestore.getInstance().searchUserByEmail(username, new MyFirestore.OnAccessDatabase<User>() {
 							@Override
 							public void onComplete(User data) {
@@ -47,7 +51,7 @@ public class AddNewDialogFragment extends DialogFragment {
 									dismiss();
 
 									//TODO: send a friend request
-									MyFirestore.getInstance().sendFriendRequest(UserProfile.get(), data, new MyFirestore.OnAccessDatabase<User>() {
+									MyFirestore.getInstance().sendFriendRequest(UserProfile.getInstance().getCurrentUser(), data, new MyFirestore.OnAccessDatabase<User>() {
 										@Override
 										public void onComplete(User data) {
 											if (data != null) {

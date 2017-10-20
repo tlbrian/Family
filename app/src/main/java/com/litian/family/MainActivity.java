@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -22,6 +23,7 @@ import android.widget.SearchView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.litian.family.auth.Auth;
+import com.litian.family.firestore.MyFirestore;
 
 public class MainActivity extends Activity {
 
@@ -63,54 +65,57 @@ public class MainActivity extends Activity {
 		tabs.setTabPaddingLeftRight(10);
 		tabs.setShouldExpand(true);
 		tabs.setViewPager(mViewPager);
+
+		MyFirestore.getInstance().listenToDatabaseEvents(UserProfile.getInstance().getCurrentUser());
     }
 
 
-	//Menu
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		SearchView sv = (SearchView) menu.findItem(R.id.search).getActionView();
-		//SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-		//SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-		//searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-		return true;
-	}
-
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-		if (item.getItemId() == R.id.add_person) {
-			//add a new person here
-			AddNewDialogFragment addNewDialog = new AddNewDialogFragment();
-			addNewDialog.show(getFragmentManager(), "add_new_chat");
-		}
-		else if (item.getItemId() == R.id.action_logout) {
-			Log.d("test", "lt >>>show log out dialog");
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-			builder.setMessage(R.string.logout_message)
-					.setTitle(R.string.logout)
-					.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// User clicked OK button
-							signOutAndGoToSignInScreen();
-						}
-					})
-					.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// User cancelled the dialog
-						}
-					});
-
-			AlertDialog dialog = builder.create();
-			dialog.show();
-		}
-		return true;
-	}
+//	//Menu
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		// Inflate the menu; this adds items to the action bar if it is present.
+//		getMenuInflater().inflate(R.menu.main, menu);
+//		SearchView sv = (SearchView) menu.findItem(R.id.search).getActionView();
+//
+//		//SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+//		//SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+//		//searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//
+//		return true;
+//	}
+//
+//
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		super.onOptionsItemSelected(item);
+//		if (item.getItemId() == R.id.add_person) {
+//			//add a new person here
+//			AddNewDialogFragment addNewDialog = new AddNewDialogFragment();
+//			addNewDialog.show(getFragmentManager(), "add_new_chat");
+//		}
+//		else if (item.getItemId() == R.id.action_logout) {
+//			Log.d("test", "lt >>>show log out dialog");
+//			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//
+//			builder.setMessage(R.string.logout_message)
+//					.setTitle(R.string.logout)
+//					.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//						public void onClick(DialogInterface dialog, int id) {
+//							// User clicked OK button
+//							signOutAndGoToSignInScreen();
+//						}
+//					})
+//					.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//						public void onClick(DialogInterface dialog, int id) {
+//							// User cancelled the dialog
+//						}
+//					});
+//
+//			AlertDialog dialog = builder.create();
+//			dialog.show();
+//		}
+//		return true;
+//	}
 
 	private void signOutAndGoToSignInScreen() {
 		Auth.getInstance().signOut();
@@ -126,6 +131,8 @@ public class MainActivity extends Activity {
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
 	}
+
+
 
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -143,14 +150,13 @@ public class MainActivity extends Activity {
 			// Return a PlaceholderFragment (defined as a static inner class below).
 			switch (position) {
 				case 0:
-					return new ChatListFragment();
-				case 1:
-					return new NotificationListFragment();
-				case 2:
-
-				default:
 					return new Fragment();
+				case 1:
+					return new FriendListFragment();
+				case 2:
+					return new NotificationListFragment();
 			}
+			return null;
 		}
 
 		@Override
@@ -165,11 +171,31 @@ public class MainActivity extends Activity {
 				case 0:
 					return "Chats";
 				case 1:
-					return "Notifications";
+					return "Friends";
 				case 2:
-					return "Settings";
+					return "Notifications";
 			}
 			return null;
+		}
+
+		/**
+		 * @param containerViewId the ViewPager this adapter is being supplied to
+		 * @param position pass in getItemId(position) as this is whats used internally in this class
+		 * @return the tag used for this pages fragment
+		 */
+		public String makeFragmentTag(int containerViewId, int position) {
+			return "android:switcher:" + containerViewId + ":" + position;
+		}
+
+
+		/**
+		 * @return may return null if the fragment has not been instantiated yet for that position - this depends on if the fragment has been viewed
+		 * yet OR is a sibling covered by {@link android.support.v4.view.ViewPager#setOffscreenPageLimit(int)}. Can use this to call methods on
+		 * the current positions fragment.
+		 */
+		public @Nullable Fragment getFragment(ViewPager container, int position) {
+			String tag = makeFragmentTag(container.getId(), position);
+			return getFragmentManager().findFragmentByTag(tag);
 		}
 	}
 }

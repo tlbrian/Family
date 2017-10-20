@@ -45,7 +45,7 @@ public class Notification {
 		return toFCM_Token;
 	}
 
-	public boolean isDone() {
+	public boolean getIsDone() {
 		return isDone;
 	}
 

@@ -10,10 +10,15 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 
@@ -22,22 +27,26 @@ import com.litian.family.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatListFragment extends ListFragment implements OnQueryTextListener {
+public class FriendListFragment extends ListFragment implements OnQueryTextListener {
 
 	public static final String PREFS_NAME = "UserPrefs";
-	private static final String TAG = "ChatList";
+	private static final String TAG = "FriendList";
 
 //	int mCurCheckPosition = 0;
 	MyAdapter mAdapter;
 	
 	String mCurFilter;
 
+	public FriendListFragment() {
+		super();
+	}
+
 
 //    @Override
 //    public View onCreateView(LayoutInflater inflater, ViewGroup container,
 //        Bundle savedInstanceState) {
 //        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.activity_main, container, false);
+//        return inflater.inflate(R.layout.fragment_friendlist, container, false);
 //    }
 
 
@@ -53,11 +62,11 @@ public class ChatListFragment extends ListFragment implements OnQueryTextListene
 			User user = getItem(position);
 			// Check if an existing view is being reused, otherwise inflate the view
 			if (convertView == null) {
-				convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_chat, parent, false);
+				convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_friend, parent, false);
 			}
 
 			// Lookup view for data population
-			TextView chatName = convertView.findViewById(R.id.chat_name);
+			TextView chatName = convertView.findViewById(R.id.friend_name);
 			TextView lastMessage = convertView.findViewById(R.id.last_message);
 
 			// Populate the data into the template view using the data object
@@ -75,7 +84,7 @@ public class ChatListFragment extends ListFragment implements OnQueryTextListene
 
         // Give some text to display if there is no data.  In a real
         // application this would come from a resource.
-        setEmptyText("No Chat");
+        setEmptyText(getString(R.string.no_friends));
 
 		setHasOptionsMenu(true);
 		
@@ -85,49 +94,53 @@ public class ChatListFragment extends ListFragment implements OnQueryTextListene
 	    test.add(new User("test1@lt.com"));
 	    test.add(new User("test2@lt.com"));
         mAdapter = new MyAdapter(getActivity(), test);
-	    List<String> uids = UserProfile.get().getFriendUids();
+	    List<String> uids = UserProfile.getInstance().getCurrentUser().getFriendUids();
 	    if (uids != null) {
 		    for (String uid : uids) {
-			    mAdapter.add(new User(uid, null));
+			    test.add(new User(uid, null));
 		    }
 	    }
 
 	    setListAdapter(mAdapter);
 
-
-
-        // Start out with a progress indicator.
-        setListShown(true);
-		
-		//ReceiverDaemon.getInstance();
 	}
 
 
-	public void addFriendToList(User user) {
-		mAdapter.add(user);
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.d(TAG, "onResume called");
+		if (UserProfile.getInstance().isFriendListDirty()) {
+			UserProfile.getInstance().setFriendListDirty(false);
+			Log.d(TAG, "friend is dirty");
+			mAdapter.clear();
+			for (String uid : UserProfile.getInstance().getCurrentUser().getFriendUids()) {
+				mAdapter.add(new User(uid, null));
+			}
+		}
 	}
 
 
 
     //Menu
-//	@Override
-//	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		menu.clear();
-//		inflater.inflate(R.menu.main, menu);
-//		SearchView sv = (SearchView) menu.findItem(R.id.search).getActionView();
-//		sv.setOnQueryTextListener(this);
-//		//SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-//		//SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-//		//searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-//	}
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		menu.clear();
+		inflater.inflate(R.menu.main, menu);
+		SearchView sv = (SearchView) menu.findItem(R.id.search).getActionView();
+		sv.setOnQueryTextListener(this);
+		//SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+		//SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+		//searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+	}
 
 
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		super.onOptionsItemSelected(item);
-//		return true;
-//	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		return true;
+	}
 	
 	
 	@Override
