@@ -3,8 +3,11 @@ package com.litian.family;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.litian.family.model.Friend;
 import com.litian.family.model.Notification;
 import com.litian.family.model.User;
+
+import java.util.List;
 
 /**
  * Created by TianLi on 2017/10/14.
@@ -18,7 +21,8 @@ public class UserProfile {
 
 	private User currentUser;
 	private Bundle data;
-	private boolean isFriendListDirty;
+	private List<Friend> friends;
+	private List<Notification> notifications;
 
 	private UserProfile(){}
 
@@ -50,16 +54,27 @@ public class UserProfile {
 		data = b;
 	}
 
-	public void addFriend(String uid) {
-		isFriendListDirty = true;
-		currentUser.addFriend(uid);
+	public List<Friend> getFriends() {
+		return friends;
 	}
 
-	public boolean isFriendListDirty() {
-		return isFriendListDirty;
+	public void setFriends(List<Friend> friends) {
+		this.friends = friends;
 	}
 
-	public void setFriendListDirty(boolean friendListDirty) {
-		isFriendListDirty = friendListDirty;
+	public void addFriend(Friend friend) {
+		friends.add(friend);
+	}
+
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
+	}
+
+	public void addNotification(Notification notification) {
+		notifications.add(notification);
 	}
 }

@@ -7,7 +7,6 @@ package com.litian.family;
 
 import android.app.ListFragment;
 import android.content.Context;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.litian.family.firestore.MyFirestore;
+import com.litian.family.model.Friend;
 import com.litian.family.model.Notification;
 import com.litian.family.model.User;
 
@@ -46,7 +46,7 @@ public class NotificationListFragment extends ListFragment {
 
 
 	public class MyAdapter extends ArrayAdapter<Notification> {
-		public MyAdapter(Context context, ArrayList<Notification> notifications) {
+		public MyAdapter(Context context, List<Notification> notifications) {
 			super(context, 0, notifications);
 		}
 
@@ -100,20 +100,14 @@ public class NotificationListFragment extends ListFragment {
 		
 		// Create an empty adapter we will use to display the loaded data.
 	    // TODO: replace with real data
-	    final ArrayList<Notification> test = new ArrayList<>();
-	    test.add(new Notification("message 1"));
-	    test.add(new Notification("message 2"));
-        mAdapter = new MyAdapter(getActivity(), test);
         setListAdapter(mAdapter);
-		
-        // Start out with a progress indicator.
-        setListShown(false);
 
 	    MyFirestore.getInstance().searchFriendRequestsToUser(UserProfile.getInstance().getCurrentUser(), new MyFirestore.OnAccessDatabase<List<Notification>>() {
 		    @Override
 		    public void onComplete(List<Notification> data) {
-			    test.addAll(data);
-			    setListShown(true);
+			    UserProfile.getInstance().setNotifications(data);
+			    mAdapter = new MyAdapter(getActivity(), data);
+			    setListAdapter(mAdapter);
 		    }
 	    });
 
@@ -126,20 +120,12 @@ public class NotificationListFragment extends ListFragment {
 			@Override
 			public void onComplete(User data) {
 				if (data != null) {
-
-					UserProfile.getInstance().addFriend(from_uid);
-					MyFirestore.getInstance().updateFriendList(UserProfile.getInstance().getCurrentUser(), new MyFirestore.OnAccessDatabase<Boolean>() {
+					// create friendship document
+					MyFirestore.getInstance().createFriendship(UserProfile.getInstance().getCurrentUser(), data, new MyFirestore.OnAccessDatabase<Friend>() {
 						@Override
-						public void onComplete(Boolean data) {
-							if (data) {
-								Toast.makeText(getActivity(), getString(R.string.friend_added), Toast.LENGTH_SHORT).show();
-								MyFirestore.getInstance().updateFriendRequest(from_uid, UserProfile.getInstance().getCurrentUser().getUid(), null);
-							}
-							else {
-								Log.e(TAG, "failed to add friend to database");
-							}
-							// TODO: update FriendList
-
+						public void onComplete(Friend data) {
+							Toast.makeText(getActivity(), getString(R.string.friend_added), Toast.LENGTH_SHORT).show();
+							MyFirestore.getInstance().updateFriendRequestAsDone(from_uid, UserProfile.getInstance().getCurrentUser().getUid(), null);
 						}
 					});
 				}

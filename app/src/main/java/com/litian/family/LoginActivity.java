@@ -107,13 +107,17 @@ public class LoginActivity extends Activity {
 								// Save the valid email and password to SharePreference
 								saveLoginToSharePrefs(email, password);
 
+								initUserProfile(user);
 								UserProfile.getInstance().setCurrentUser(user);
 
-								gotoChatList();
+
+								gotoMainActivity();
 							}
 							else {
 								Log.d(TAG, "Log in failed, no user in database");
-								gotoChatList();
+								Toast.makeText(LoginActivity.this, R.string.auth_failed,
+										Toast.LENGTH_SHORT).show();
+								showProgress(false);
 							}
 						}
 					});
@@ -250,9 +254,16 @@ public class LoginActivity extends Activity {
 	    editor.apply();
     }
 
+	private void initUserProfile(User user) {
+		
+	}
 
 
-    private void gotoChatList() {
+
+
+
+
+	private void gotoMainActivity() {
 	    Intent intent = new Intent(LoginActivity.this,
 			    MainActivity.class);
 	    startActivity(intent);

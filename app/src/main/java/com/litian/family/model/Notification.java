@@ -37,6 +37,10 @@ public class Notification {
 		return from_FCMToken;
 	}
 
+	public void setFrom_FCMToken(String from_FCMToken) {
+		this.from_FCMToken = from_FCMToken;
+	}
+
 	public String getTo_uid() {
 		return to_uid;
 	}
@@ -49,7 +53,4 @@ public class Notification {
 		return isDone;
 	}
 
-	public void setFrom_FCMToken(String from_FCMToken) {
-		this.from_FCMToken = from_FCMToken;
-	}
 }

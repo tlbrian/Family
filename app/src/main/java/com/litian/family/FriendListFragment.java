@@ -22,6 +22,8 @@ import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 
+import com.litian.family.firestore.MyFirestore;
+import com.litian.family.model.Friend;
 import com.litian.family.model.User;
 
 import java.util.ArrayList;
@@ -50,16 +52,16 @@ public class FriendListFragment extends ListFragment implements OnQueryTextListe
 //    }
 
 
-	public class MyAdapter extends ArrayAdapter<User> {
-		public MyAdapter(Context context, ArrayList<User> users) {
-			super(context, 0, users);
+	public class MyAdapter extends ArrayAdapter<Friend> {
+		public MyAdapter(Context context, List<Friend> friends) {
+			super(context, 0, friends);
 		}
 
 		@NonNull
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// Get the data item for this position
-			User user = getItem(position);
+			Friend friend = getItem(position);
 			// Check if an existing view is being reused, otherwise inflate the view
 			if (convertView == null) {
 				convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_friend, parent, false);
@@ -70,7 +72,7 @@ public class FriendListFragment extends ListFragment implements OnQueryTextListe
 			TextView lastMessage = convertView.findViewById(R.id.last_message);
 
 			// Populate the data into the template view using the data object
-			chatName.setText(user.getEmail());
+			chatName.setText(friend.getName());
 //			lastMessage.setText(user.hometown);
 
 			// Return the completed view to render on screen
@@ -87,37 +89,17 @@ public class FriendListFragment extends ListFragment implements OnQueryTextListe
         setEmptyText(getString(R.string.no_friends));
 
 		setHasOptionsMenu(true);
-		
-		// Create an empty adapter we will use to display the loaded data.
-	    // TODO: replace with real data
-	    ArrayList<User> test = new ArrayList<>();
-	    test.add(new User("test1@lt.com"));
-	    test.add(new User("test2@lt.com"));
-        mAdapter = new MyAdapter(getActivity(), test);
-	    List<String> uids = UserProfile.getInstance().getCurrentUser().getFriendUids();
-	    if (uids != null) {
-		    for (String uid : uids) {
-			    test.add(new User(uid, null));
+
+	    // get real data from db and attach to adapter
+	    MyFirestore.getInstance().searchFriends(UserProfile.getInstance().getCurrentUser(), new MyFirestore.OnAccessDatabase<List<Friend>>() {
+		    @Override
+		    public void onComplete(List<Friend> data) {
+			    UserProfile.getInstance().setFriends(data);
+			    mAdapter = new MyAdapter(getActivity(), data);
+			    setListAdapter(mAdapter);
 		    }
-	    }
+	    });
 
-	    setListAdapter(mAdapter);
-
-	}
-
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		Log.d(TAG, "onResume called");
-		if (UserProfile.getInstance().isFriendListDirty()) {
-			UserProfile.getInstance().setFriendListDirty(false);
-			Log.d(TAG, "friend is dirty");
-			mAdapter.clear();
-			for (String uid : UserProfile.getInstance().getCurrentUser().getFriendUids()) {
-				mAdapter.add(new User(uid, null));
-			}
-		}
 	}
 
 
