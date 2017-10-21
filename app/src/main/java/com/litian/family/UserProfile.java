@@ -7,6 +7,7 @@ import com.litian.family.model.Friend;
 import com.litian.family.model.Notification;
 import com.litian.family.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +25,10 @@ public class UserProfile {
 	private List<Friend> friends;
 	private List<Notification> notifications;
 
-	private UserProfile(){}
+	private UserProfile(){
+		friends = new ArrayList<>();
+		notifications = new ArrayList<>();
+	}
 
 	public static void init() {
 		instance = new UserProfile();
@@ -63,6 +67,7 @@ public class UserProfile {
 	}
 
 	public void addFriend(Friend friend) {
+		Log.d("litian", "litian is called " + friend.getFriendOf());
 		friends.add(friend);
 	}
 

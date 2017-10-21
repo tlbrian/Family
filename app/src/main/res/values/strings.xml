@@ -30,7 +30,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="auth_failed">Log In Failed!</string>
+    <string name="login_failed_cant_authenticate">Login Failed - Failed to authenticate user</string>
     <string name="action_sign_up">Register</string>
     <string name="sign_up_failed">Sign up failed!</string>
     <string name="ok">OK</string>
@@ -43,6 +43,9 @@
     <string name="friend_added">Friend added. Start chatting now!</string>
     <string name="added">added</string>
     <string name="already_a_friend">You are already friends</string>
+    <string name="login_failed_user_not_found">Login failed - User is not found in DB</string>
+    <string name="login_failed_cant_fetch_user_data">Login failed - Couldn\'t fetch user data in DB</string>
+    <string name="no_notifications">No Notifications</string>
 
 
 </resources>

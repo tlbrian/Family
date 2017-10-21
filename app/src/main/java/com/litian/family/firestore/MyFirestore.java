@@ -241,7 +241,7 @@ public class MyFirestore {
 	 * @param toUser
 	 * @param listener
 	 */
-	public void searchFriendRequestsToUser(@NonNull final User toUser, final OnAccessDatabase<List<Notification>> listener) {
+	public void searchFriendRequests(@NonNull final User toUser, final OnAccessDatabase<List<Notification>> listener) {
 		Query query = db.collection(friendReqCollectionName)
 				.whereEqualTo("to_uid", toUser.getUid());
 
@@ -305,7 +305,7 @@ public class MyFirestore {
 
 	public void searchFriends(@NonNull final User fromUser, final OnAccessDatabase<List<Friend>> listener) {
 		Query query = db.collection(friendshipCollectionName)
-				.whereEqualTo("from_uid", fromUser.getUid());
+				.whereEqualTo("friendOf", fromUser.getUid());
 
 		// Add a new document with a generated ID
 		query.get()
@@ -369,7 +369,7 @@ public class MyFirestore {
 	public void listenToDatabaseEvents(final User currentUser) {
 		// be notified when friend accept the request
 		db.collection(friendshipCollectionName)
-				.whereEqualTo("from_uid", currentUser.getUid())
+				.whereEqualTo("friendOf", currentUser.getUid())
 				.addSnapshotListener(new EventListener<QuerySnapshot>() {
 					@Override
 					public void onEvent(@Nullable QuerySnapshot snapshots,

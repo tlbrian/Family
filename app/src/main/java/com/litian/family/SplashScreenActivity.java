@@ -14,6 +14,9 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.litian.family.Task.FetchProfileTask;
+import com.litian.family.Task.Task;
+import com.litian.family.Task.TaskStatus;
 import com.litian.family.auth.Auth;
 import com.litian.family.firestore.MyFirestore;
 import com.litian.family.messaging.MyFirebaseInstanceIDService;
@@ -73,12 +76,12 @@ public class SplashScreenActivity extends Activity
 		                    public void onComplete(User data) {
 			                    if (data != null) {
 				                    Log.d(TAG, "Log in success");
-				                    UserProfile.getInstance().setCurrentUser(data);
-				                    gotoActivity(MainActivity.class);
+
+				                    fetchUserProfile(data);
 			                    }
 			                    else {
 				                    Log.d(TAG, "Log in failed, no user in database");
-				                    gotoActivity(LoginActivity.class);
+				                    onLoginCompleted(LoginActivity.class);
 			                    }
 		                    }
 	                    });
@@ -91,7 +94,7 @@ public class SplashScreenActivity extends Activity
                         editor.remove("password");
                         editor.apply();
 
-	                    gotoActivity(LoginActivity.class);
+	                    onLoginCompleted(LoginActivity.class);
                     }
                 }
             });
@@ -102,7 +105,7 @@ public class SplashScreenActivity extends Activity
 
                 @Override
                 public void run() {
-					gotoActivity(LoginActivity.class);
+					onLoginCompleted(LoginActivity.class);
 
                 }
 
@@ -110,7 +113,26 @@ public class SplashScreenActivity extends Activity
         }
     }
 
-    public void gotoActivity(Class<? extends Activity> activity) {
+	private void fetchUserProfile(User user) {
+		UserProfile.getInstance().setCurrentUser(user);
+		FetchProfileTask task = new FetchProfileTask(user);
+		task.setOnCompletedListener(new Task.OnCompletedListener() {
+			@Override
+			public void onComplete(TaskStatus status) {
+				if (status == TaskStatus.success) {
+					onLoginCompleted(MainActivity.class);
+				} else {
+					onLoginCompleted(LoginActivity.class);
+				}
+			}
+		});
+		task.addTasks();
+		task.startTask();
+	}
+
+
+
+    private void onLoginCompleted(Class<? extends Activity> activity) {
 	    Intent intent = new Intent(SplashScreenActivity.this,
 			    activity);
 	    startActivity(intent);

@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.litian.family.Task.FetchProfileTask;
+import com.litian.family.Task.Task;
+import com.litian.family.Task.TaskStatus;
 import com.litian.family.auth.Auth;
 import com.litian.family.firestore.MyFirestore;
 import com.litian.family.messaging.MyFirebaseInstanceIDService;
@@ -107,24 +110,16 @@ public class LoginActivity extends Activity {
 								// Save the valid email and password to SharePreference
 								saveLoginToSharePrefs(email, password);
 
-								initUserProfile(user);
-								UserProfile.getInstance().setCurrentUser(user);
-
-
-								gotoMainActivity();
+								// fetch user profile
+								fetchUserProfile(user);
 							}
 							else {
-								Log.d(TAG, "Log in failed, no user in database");
-								Toast.makeText(LoginActivity.this, R.string.auth_failed,
-										Toast.LENGTH_SHORT).show();
-								showProgress(false);
+								onLoginFailed(getString(R.string.login_failed_user_not_found));
 							}
 						}
 					});
 				} else {
-					Toast.makeText(LoginActivity.this, R.string.auth_failed,
-							Toast.LENGTH_SHORT).show();
-					showProgress(false);
+					onLoginFailed(getString(R.string.login_failed_cant_authenticate));
 				}
 			}
 		});
@@ -254,20 +249,37 @@ public class LoginActivity extends Activity {
 	    editor.apply();
     }
 
-	private void initUserProfile(User user) {
-		
+
+	private void fetchUserProfile(User user) {
+		UserProfile.getInstance().setCurrentUser(user);
+		FetchProfileTask task = new FetchProfileTask(user);
+		task.setOnCompletedListener(new Task.OnCompletedListener() {
+			@Override
+			public void onComplete(TaskStatus status) {
+				if (status == TaskStatus.success) {
+					onLoginSuccess();
+				}
+				else {
+					onLoginFailed(getString(R.string.login_failed_cant_fetch_user_data));
+				}
+			}
+		});
+		task.addTasks();
+		task.startTask();
 	}
 
+	private void onLoginSuccess() {
+		Intent intent = new Intent(LoginActivity.this,
+				MainActivity.class);
+		startActivity(intent);
+	}
 
-
-
-
-
-	private void gotoMainActivity() {
-	    Intent intent = new Intent(LoginActivity.this,
-			    MainActivity.class);
-	    startActivity(intent);
-    }
+	private void onLoginFailed(String message) {
+		Log.d(TAG, message);
+		Toast.makeText(LoginActivity.this, R.string.login_failed_cant_authenticate,
+				Toast.LENGTH_SHORT).show();
+		showProgress(false);
+	}
 
 }
 

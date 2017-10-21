@@ -91,15 +91,8 @@ public class FriendListFragment extends ListFragment implements OnQueryTextListe
 		setHasOptionsMenu(true);
 
 	    // get real data from db and attach to adapter
-	    MyFirestore.getInstance().searchFriends(UserProfile.getInstance().getCurrentUser(), new MyFirestore.OnAccessDatabase<List<Friend>>() {
-		    @Override
-		    public void onComplete(List<Friend> data) {
-			    UserProfile.getInstance().setFriends(data);
-			    mAdapter = new MyAdapter(getActivity(), data);
-			    setListAdapter(mAdapter);
-		    }
-	    });
-
+	    mAdapter = new MyAdapter(getActivity(), UserProfile.getInstance().getFriends());
+	    setListAdapter(mAdapter);
 	}
 
 

@@ -9,7 +9,6 @@ import android.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import com.litian.family.model.Friend;
 import com.litian.family.model.Notification;
 import com.litian.family.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationListFragment extends ListFragment {
@@ -81,7 +79,7 @@ public class NotificationListFragment extends ListFragment {
 
 			// Populate the data into the template view using the data object
 			messageView.setText(notification.getMessage());
-//			lastMessage.setText(user.hometown);
+			from_user.setText(notification.getFrom_uid());
 
 			// Return the completed view to render on screen
 			return convertView;
@@ -94,22 +92,13 @@ public class NotificationListFragment extends ListFragment {
 
         // Give some text to display if there is no data.  In a real
         // application this would come from a resource.
-        setEmptyText("No Chat");
+        setEmptyText(getString(R.string.no_notifications));
 
 		setHasOptionsMenu(false);
-		
-		// Create an empty adapter we will use to display the loaded data.
-	    // TODO: replace with real data
-        setListAdapter(mAdapter);
 
-	    MyFirestore.getInstance().searchFriendRequestsToUser(UserProfile.getInstance().getCurrentUser(), new MyFirestore.OnAccessDatabase<List<Notification>>() {
-		    @Override
-		    public void onComplete(List<Notification> data) {
-			    UserProfile.getInstance().setNotifications(data);
-			    mAdapter = new MyAdapter(getActivity(), data);
-			    setListAdapter(mAdapter);
-		    }
-	    });
+	    // get real data from db and attach to adapter
+	    mAdapter = new MyAdapter(getActivity(), UserProfile.getInstance().getNotifications());
+	    setListAdapter(mAdapter);
 
 	}
 
