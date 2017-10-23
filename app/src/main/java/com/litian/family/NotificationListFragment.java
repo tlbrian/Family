@@ -123,6 +123,10 @@ public class NotificationListFragment extends ListFragment {
 	}
 
 
+	void notifyDataSetChanged() {
+		if (mAdapter != null) mAdapter.notifyDataSetChanged();
+	}
+
 
 
     //Menu

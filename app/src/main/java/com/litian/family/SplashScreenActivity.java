@@ -77,7 +77,9 @@ public class SplashScreenActivity extends Activity
 			                    if (data != null) {
 				                    Log.d(TAG, "Log in success");
 
-				                    fetchUserProfile(data);
+//				                    fetchUserProfile(data);
+				                    UserProfile.getInstance().setCurrentUser(data);
+				                    onLoginCompleted(MainActivity.class);
 			                    }
 			                    else {
 				                    Log.d(TAG, "Log in failed, no user in database");
@@ -114,7 +116,6 @@ public class SplashScreenActivity extends Activity
     }
 
 	private void fetchUserProfile(User user) {
-		UserProfile.getInstance().setCurrentUser(user);
 		FetchProfileTask task = new FetchProfileTask(user);
 		task.setOnCompletedListener(new Task.OnCompletedListener() {
 			@Override

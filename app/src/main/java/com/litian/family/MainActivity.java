@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.MultiSelectListPreference;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -66,7 +67,29 @@ public class MainActivity extends Activity {
 		tabs.setShouldExpand(true);
 		tabs.setViewPager(mViewPager);
 
-		MyFirestore.getInstance().listenToDatabaseEvents(UserProfile.getInstance().getCurrentUser());
+		MyFirestore.getInstance().listenToFriendEvents(UserProfile.getInstance().getCurrentUser(), new MyFirestore.OnAccessDatabase<MyFirestore.DatabaseEventType>() {
+				@Override
+				public void onComplete(MyFirestore.DatabaseEventType data) {
+					if (data == MyFirestore.DatabaseEventType.add) {
+						Fragment f = mSectionsPagerAdapter.getFragment(mViewPager, 1);
+						if (f != null) {
+							((FriendListFragment)f).notifyDataSetChanged();
+						}
+					}
+				}
+			});
+
+		MyFirestore.getInstance().listenToFriendRequestEvents(UserProfile.getInstance().getCurrentUser(), new MyFirestore.OnAccessDatabase<MyFirestore.DatabaseEventType>() {
+				@Override
+				public void onComplete(MyFirestore.DatabaseEventType data) {
+					if (data == MyFirestore.DatabaseEventType.add) {
+						Fragment f = mSectionsPagerAdapter.getFragment(mViewPager, 2);
+						if (f != null) {
+							((NotificationListFragment)f).notifyDataSetChanged();
+						}
+					}
+				}
+		});
     }
 
 

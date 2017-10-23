@@ -99,8 +99,6 @@ public class LoginActivity extends Activity {
 			@Override
 			public void onSignInResult(boolean success) {
 				if (success) {
-					showProgress(false);
-
 					MyFirestore.getInstance().searchUserByEmail(email, new MyFirestore.OnAccessDatabase<User>() {
 						@Override
 						public void onComplete(User user) {
@@ -110,8 +108,12 @@ public class LoginActivity extends Activity {
 								// Save the valid email and password to SharePreference
 								saveLoginToSharePrefs(email, password);
 
+								// set the curent user
+								UserProfile.getInstance().setCurrentUser(user);
+
 								// fetch user profile
-								fetchUserProfile(user);
+								//fetchUserProfile(user);
+								onLoginSuccess();
 							}
 							else {
 								onLoginFailed(getString(R.string.login_failed_user_not_found));
@@ -251,7 +253,6 @@ public class LoginActivity extends Activity {
 
 
 	private void fetchUserProfile(User user) {
-		UserProfile.getInstance().setCurrentUser(user);
 		FetchProfileTask task = new FetchProfileTask(user);
 		task.setOnCompletedListener(new Task.OnCompletedListener() {
 			@Override

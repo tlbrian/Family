@@ -46,6 +46,7 @@
     <string name="login_failed_user_not_found">Login failed - User is not found in DB</string>
     <string name="login_failed_cant_fetch_user_data">Login failed - Couldn\'t fetch user data in DB</string>
     <string name="no_notifications">No Notifications</string>
+    <string name="empty_message">Empty message can\'t be sent!</string>
 
 
 </resources>

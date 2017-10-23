@@ -3,6 +3,7 @@ package com.litian.family.firestore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -16,15 +17,19 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.litian.family.UserProfile;
 import com.litian.family.auth.Auth;
 import com.litian.family.model.Friend;
+import com.litian.family.model.Message;
 import com.litian.family.model.Notification;
 import com.litian.family.model.User;
 
+import java.security.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +45,7 @@ public class MyFirestore {
 	private static final String userCollectionName = "users";
 	private static final String friendReqCollectionName = "friend_requests";
 	private static final String friendshipCollectionName = "friendships";
+	private static final String chatCollectionName = "chats";
 
 
 
@@ -63,6 +69,36 @@ public class MyFirestore {
 	}
 
 
+
+	/**
+	 *
+	 * @param token
+	 */
+	public void updateFCMToken(@NonNull String token) {
+		FirebaseUser user = Auth.getInstance().getCurrentUser();
+		DocumentReference userRef = db.collection(userCollectionName).document(user.getUid());
+
+		userRef .update("FCMToken", token)
+				.addOnSuccessListener(new OnSuccessListener<Void>() {
+					@Override
+					public void onSuccess(Void aVoid) {
+						Log.d(TAG, "FCM Token successfully updated!");
+					}
+				})
+				.addOnFailureListener(new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Log.w(TAG, "Error updating document", e);
+					}
+				});
+	}
+
+
+	/**
+	 *
+	 * @param user
+	 * @param listener
+	 */
 	public void createUserAccount(@NonNull final User user, final OnAccessDatabase<User> listener) {
 		// Add a new document with a generated ID
 		db.collection(userCollectionName).document(user.getUid())
@@ -277,15 +313,15 @@ public class MyFirestore {
 	 * @param listener
 	 */
 	public void createFriendship(@NonNull User fromUser, @NonNull final User toUser, final OnAccessDatabase<Friend> listener) {
-		final Friend friend_1 = new Friend(fromUser, toUser);
+		final Friend friend = new Friend(fromUser, toUser);
 
 		db.collection(friendshipCollectionName)
-				.add(friend_1)
+				.add(friend)
 				.addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
 					@Override
 					public void onSuccess(DocumentReference documentReference) {
 						Log.d(TAG, "createFriendship success");
-						if (listener != null) listener.onComplete(friend_1);
+						if (listener != null) listener.onComplete(friend);
 					}
 				})
 				.addOnFailureListener(new OnFailureListener() {
@@ -302,7 +338,11 @@ public class MyFirestore {
 	}
 
 
-
+	/**
+	 *
+	 * @param fromUser
+	 * @param listener
+	 */
 	public void searchFriends(@NonNull final User fromUser, final OnAccessDatabase<List<Friend>> listener) {
 		Query query = db.collection(friendshipCollectionName)
 				.whereEqualTo("friendOf", fromUser.getUid());
@@ -332,30 +372,34 @@ public class MyFirestore {
 	}
 
 
-
-
-
 	/**
 	 *
-	 * @param token
+	 * @param fromUser
+	 * @param toUser
+	 * @param message
+	 * @param listener
 	 */
-	public void updateFCMToken(@NonNull String token) {
-		FirebaseUser user = Auth.getInstance().getCurrentUser();
-		DocumentReference userRef = db.collection(userCollectionName).document(user.getUid());
-
-		userRef .update("FCMToken", token)
-				.addOnSuccessListener(new OnSuccessListener<Void>() {
+	public void addMessage(@NonNull User fromUser, @NonNull User toUser, @NonNull final Message message, final OnAccessDatabase<Message> listener) {
+		String chatName = fromUser.getUid() + "_" + toUser.getUid();
+		db.collection(chatCollectionName)
+				.document(chatName)
+				.collection("messages")
+				.add(message)
+				.addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
 					@Override
-					public void onSuccess(Void aVoid) {
-						Log.d(TAG, "FCM Token successfully updated!");
+					public void onSuccess(DocumentReference documentReference) {
+						Log.w(TAG, "message added");
+						if (listener != null) listener.onComplete(message);
 					}
 				})
 				.addOnFailureListener(new OnFailureListener() {
 					@Override
 					public void onFailure(@NonNull Exception e) {
-						Log.w(TAG, "Error updating document", e);
+						Log.w(TAG, "Error adding document", e);
+						if (listener != null) listener.onComplete(null);
 					}
 				});
+
 	}
 
 
@@ -366,7 +410,7 @@ public class MyFirestore {
 	 *
 	 * @param currentUser
 	 */
-	public void listenToDatabaseEvents(final User currentUser) {
+	public void listenToFriendEvents(final User currentUser, final OnAccessDatabase<DatabaseEventType> listener) {
 		// be notified when friend accept the request
 		db.collection(friendshipCollectionName)
 				.whereEqualTo("friendOf", currentUser.getUid())
@@ -385,6 +429,7 @@ public class MyFirestore {
 									case ADDED:
 										Log.d(TAG, "New: " + dc.getDocument().getData());
 										UserProfile.getInstance().addFriend(dc.getDocument().toObject(Friend.class));
+										if (listener != null) listener.onComplete(DatabaseEventType.add);
 										break;
 									case MODIFIED:
 										Log.d(TAG, "Modified: " + dc.getDocument().getData());
@@ -398,7 +443,9 @@ public class MyFirestore {
 
 					}
 				});
+	}
 
+	public void listenToFriendRequestEvents(final User currentUser, final OnAccessDatabase<DatabaseEventType> listener) {
 		// be notified when receiving a friend request
 		db.collection(friendReqCollectionName)
 				.whereEqualTo("to_uid", currentUser.getUid())
@@ -416,6 +463,7 @@ public class MyFirestore {
 								case ADDED:
 									Log.d(TAG, "New: " + dc.getDocument().getData());
 									UserProfile.getInstance().addNotification(dc.getDocument().toObject(Notification.class));
+									if (listener != null) listener.onComplete(DatabaseEventType.add);
 									break;
 								case MODIFIED:
 									Log.d(TAG, "Modified: " + dc.getDocument().getData());
@@ -432,8 +480,63 @@ public class MyFirestore {
 
 
 
+	public ListenerRegistration listenToMessageEvents(final String fromUid, final String toUid, final OnAccessDatabase<MessageWithType> listener) {
+		String chatName = fromUid + "_" + toUid;
+
+		ListenerRegistration registration = db.collection(chatCollectionName)
+				.document(chatName)
+				.collection("messages")
+				.addSnapshotListener(new EventListener<QuerySnapshot>() {
+					@Override
+					public void onEvent(@Nullable QuerySnapshot snapshots,
+					                    @Nullable FirebaseFirestoreException e) {
+						if (e != null) {
+							Log.w(TAG, "listen:error", e);
+							return;
+						}
+
+						for (DocumentChange dc : snapshots.getDocumentChanges()) {
+							switch (dc.getType()) {
+								case ADDED:
+									Log.d(TAG, "New: " + dc.getDocument().getData());
+									if (listener != null) listener.onComplete(new MessageWithType(DatabaseEventType.add, dc.getDocument().toObject(Message.class)));
+									break;
+								case MODIFIED:
+									Log.d(TAG, "Modified: " + dc.getDocument().getData());
+									break;
+								case REMOVED:
+									Log.d(TAG, "Removed: " + dc.getDocument().getData());
+									break;
+							}
+						}
+
+					}
+				});
+		return registration;
+	}
+
+	public class MessageWithType {
+		public DatabaseEventType databaseEventType;
+		public Message message;
+
+		public MessageWithType(DatabaseEventType type, Message m) {
+			databaseEventType = type;
+			message = m;
+		}
+	}
+
+
+
+
+
 
 	public interface OnAccessDatabase<T> {
 		void onComplete(T data);
+	}
+
+	public enum DatabaseEventType {
+		add,
+		modify,
+		remove
 	}
 }

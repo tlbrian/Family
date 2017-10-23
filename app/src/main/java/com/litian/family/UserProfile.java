@@ -8,6 +8,8 @@ import com.litian.family.model.Notification;
 import com.litian.family.model.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -69,6 +71,12 @@ public class UserProfile {
 	public void addFriend(Friend friend) {
 		Log.d("litian", "litian is called " + friend.getFriendOf());
 		friends.add(friend);
+		Collections.sort(friends, new Comparator<Friend>() {
+			@Override
+			public int compare(Friend f1, Friend f2) {
+				return f1.getName().compareTo(f2.getName());
+			}
+		});
 	}
 
 	public List<Notification> getNotifications() {
@@ -80,6 +88,6 @@ public class UserProfile {
 	}
 
 	public void addNotification(Notification notification) {
-		notifications.add(notification);
+		notifications.add(0, notification);
 	}
 }

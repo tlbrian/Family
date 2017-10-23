@@ -107,12 +107,13 @@
     <orderEntry type="library" exported="" name="okio-1.6.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-11.4.2" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-license-11.4.2" level="project" />
+    <orderEntry type="library" exported="" name="support-v13-26.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-media-compat-26.1.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-firestore-11.4.2" level="project" />
-    <orderEntry type="library" exported="" name="support-v13-26.1.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-iid-11.4.2" level="project" />
     <orderEntry type="library" exported="" name="firebase-core-11.4.2" level="project" />
     <orderEntry type="library" exported="" name="firebase-messaging-license-11.4.2" level="project" />
+    <orderEntry type="library" exported="" name="recyclerview-v7-26.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-core-utils-26.1.0" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.7.2" level="project" />
     <orderEntry type="library" exported="" name="firebase-auth-license-11.4.2" level="project" />
